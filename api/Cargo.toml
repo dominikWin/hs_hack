@@ -7,3 +7,4 @@ authors = ["Dominik Winecki <dominikwinecki@gmail.com>"]
 rocket = "0.3.6"
 rocket_codegen = "0.3.6"
 redis = "0.8.0"
+tempfile = "2"
