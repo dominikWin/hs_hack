@@ -11,22 +11,22 @@ class App extends Component {
 
     this.state = {
       colors: [
-        { color: "red", hex: "#B03A2E" },
-        { color: "orange", hex: "#E67E22" },
-        { color: "yellow", hex: "#F4DO3F" },
-        { color: "green", hex: "#52BE80" },
-        { color: "blue", hex: "#3498DB" },
-        { color: "darkBlue", hex: "#1F618" },
-        { color: "purple", hex: "#7D3C9F" },
-        { color: "pink", hex: "#E91E63" },
-        { color: "white", hex: "#FDFEFE" },
-        { color: "lavender", hex: "#C39BD3" },
-        { color: "teal", hex: "#76D7C4" },
-        { color: "lightBlue", hex: "#D6EAFF" },
-        { color: "tan", hex: "#EDBB99" },
-        { color: "brown", hex: "#A04000" },
-        { color: "black", hex: "#17202A" },
-        { color: "lightGreen", hex: "#81C784" }
+        "white",
+        "orange",
+        "red",
+        "yellow",
+        "blue",
+        "green",
+        "darkBlue",
+        "purple",
+        "pink",
+        "lavender",
+        "teal",
+        "lightBlue",
+        "tan",
+        "black",
+        "lightGreen",
+        "brown"
       ],
       imageAddress: "",
       currColor: "",
@@ -36,16 +36,18 @@ class App extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
     this.renderButtons = this.renderButtons.bind(this);
+
+    this.updateBackgroundImage();
   }
 
   renderButtons() {
     return this.state.colors.map(color => (
       <button
-        onClick={() => this.handleClick(color.color)}
-        style={{ backgroundColor: color.color }}
-        color={color.color}
+        onClick={() => this.handleClick(this.state.colors.indexOf(color))}
+        style={{ backgroundColor: color }}
+        color={color}
       >
-        {color.color}
+        {color}
       </button>
     ));
   }
@@ -66,21 +68,30 @@ class App extends Component {
   async sendEvent(x, y, color) {
     const url = `/api/${x}/${y}/${color}`;
     console.log(url);
+    //TODO add fetch for url here
+    this.fetch(url);
+    this.updateBackgroundImage();
+  }
+
+  async updateBackgroundImage() {
+    this.setState({image: await this.fetchImage("http://localhost:3000/cutting-board.jpg")});
+  }
+
+  async fetch(url) {
     try {
-      const dogImage = await window.fetch("http://localhost:3000/cutting-board.jpg");
-      console.log(dogImage);
-      const dogBlob = await dogImage.blob();
-      console.log(dogBlob);
-      const urlCreator = window.URL || window.webkitURL;
-      const dogAddress = urlCreator.createObjectURL(dogBlob);
-      this.setState({image: dogAddress});
+      return await window.fetch(url);
     } catch(e) {
       console.log(e);
     }
   }
 
-  updateImage() {
-    this.setstate({ imageAddress: `/api/` });
+  async fetchImage(url) {
+    const dogImage = await this.fetch(url);
+    console.log(dogImage);
+    const dogBlob = await dogImage.blob();
+    console.log(dogBlob);
+    const urlCreator = window.URL || window.webkitURL;
+    return urlCreator.createObjectURL(dogBlob);
   }
 
   render() {
