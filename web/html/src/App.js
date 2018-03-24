@@ -68,13 +68,12 @@ class App extends Component {
   async sendEvent(x, y, color) {
     const url = `/api/${x}/${y}/${color}`;
     console.log(url);
-    //TODO add fetch for url here
     this.fetch(url);
     this.updateBackgroundImage();
   }
 
   async updateBackgroundImage() {
-    this.setState({image: await this.fetchImage("http://localhost:3000/cutting-board.jpg")});
+    this.setState({image: await this.fetchImage("http://localhost:3001/board.svg")});
   }
 
   async fetch(url) {
