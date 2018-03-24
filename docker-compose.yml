@@ -4,9 +4,18 @@ services:
                 build:
                         context: ./api
                 ports:
-                        - "8000:8000"
+                        - "3001:3001"
+                depends_on:
+                        - redis
+                environment:
+                        - REDIS=redis://redis:6379/
         web:
                 build:
                         context: ./web
                 ports:
                         - "8080:80"
+        redis:
+                image: "redis:alpine"
+                ports:
+                        -  "6379:6379"
+
