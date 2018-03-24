@@ -30,7 +30,9 @@ class App extends Component {
       ],
       imageAddress: "",
       currColor: "",
-      image: ""
+      image: "",
+      width: 256,
+      height: 256
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -58,9 +60,14 @@ class App extends Component {
 
   handleCanvasClick(event) {
     console.log(event.nativeEvent.offsetX);
+
+    const image = document.getElementById("canvas");
+    const scaledX = Math.ceil(event.nativeEvent.offsetX / (image.offsetWidth / this.state.width));
+    const scaledY = Math.ceil(event.nativeEvent.offsetY / (image.offsetHeight / this.state.height));
+
     this.sendEvent(
-      event.nativeEvent.offsetX,
-      event.nativeEvent.offsetY,
+      scaledX,
+      scaledY,
       this.state.currColor
     );
   }
@@ -73,7 +80,7 @@ class App extends Component {
   }
 
   async updateBackgroundImage() {
-    this.setState({image: await this.fetchImage("http://localhost:3001/board.svg")});
+    this.setState({image: await this.fetchImage("http://localhost/board.bmp")});
   }
 
   async fetch(url) {
@@ -97,7 +104,7 @@ class App extends Component {
     return (
       <Wrapper>
         <UIWrapper>
-          <Canvas onClick={this.handleCanvasClick} src={this.state.image}/>
+          <Canvas id="canvas" onClick={this.handleCanvasClick} src={this.state.image}/>
           <ToolBar>{this.renderButtons()}</ToolBar>
         </UIWrapper>
       </Wrapper>
