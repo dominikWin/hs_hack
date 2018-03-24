@@ -73,7 +73,7 @@ class App extends Component {
   }
 
   async sendEvent(x, y, color) {
-    const url = `/api/${x}/${y}/${color}`;
+    const url = `/write/${x}/${y}/${color}`;
     console.log(url);
     this.fetch(url);
     this.updateBackgroundImage();
