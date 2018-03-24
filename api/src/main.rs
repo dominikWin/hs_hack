@@ -4,11 +4,12 @@
 extern crate rocket;
 extern crate redis;
 extern crate tempfile;
+#[macro_use]
+extern crate bmp;
 
 use redis::Commands;
 use std::env;
 use std::fs::File;
-use std::io::*;
 
 const WIDTH: usize = 8;
 const HEIGHT: usize = 8;
@@ -59,20 +60,28 @@ fn get_color(c: u8) -> (u8, u8, u8) {
     }
 } 
 
-#[get("/board.png")]
-fn board() -> String {
+#[get("/board.bmp")]
+fn board() -> Vec::<u8> {
+    use bmp::{Image, Pixel};
     let board = get_board();
-    let size = 12;
-    let mut content = String::new();
+    let mut img = Image::new(WIDTH as u32, HEIGHT as u32);
+    use std::io::*;
     for x in 0..WIDTH {
         for y in 0..HEIGHT {
             let (r,g,b) = get_color(board[x as usize + y as usize * WIDTH]);
-            content += &format!("<rect x=\"{x}\" y = \"{y}\" width = \"{size}\" height = \"{size}\" style=\"fill:rgb({r},{g},{b});\" />", x = x * size, y = y * size, size = size, r=r, g=g,b=b);
+            img.set_pixel(x as u32, y as u32, px!(r, g, b));
         }
     }
-    format!("<svg width = \"{w}\" height = \"{h}\">
-                {content} 
-            </svg>", content = content, w = WIDTH * size, h = HEIGHT * size)
+
+    let mut c = Cursor::new(Vec::new());
+
+    let _ = img.to_writer(&mut c);
+
+    let mut data = Vec::new();
+
+    c.read_to_end(&mut data).unwrap();
+
+    data
 }
 
 
